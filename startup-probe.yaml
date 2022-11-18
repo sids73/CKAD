@@ -1,0 +1,26 @@
+# The purpose of a startup probe is to figure out when
+# an application is fully started
+# A Startup probe finishes its operation under one of
+# the following conditions :
+# 1. If it could verify that the application has been started
+# 2. If the application does not respond within the timeout period
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: startup-pod
+  labels:
+    name: startup-pod
+spec:
+  containers:
+  - name: http-server
+    image: httpd:2.4.46
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    startupProbe: 
+      tcpSocket:
+        port: 80
+      initialDelaySeconds: 3
+      periodSeconds: 15
