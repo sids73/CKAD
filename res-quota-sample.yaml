@@ -5,10 +5,10 @@ metadata:
    namespace: project-firebird
 spec:
   hard:
-    pods: 2
+    pods: "2"
     requests.cpu: "1"
     requests.memory: 1024m
     limits.cpu: "4"
     limits.memory: 4096m
-    secrets: 1
+    secrets: "1"
 
