@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cmpod
+  labels:
+    name: cmpod
+spec:
+  containers:
+  - name: app
+    env:
+      - name: API_ENDPOINT 
+        valueFrom:
+          configMapKeyRef:
+            key: api_endpoint
+            name: myconfigmap
+      - name: USERNAME 
+        valueFrom:
+          configMapKeyRef:
+            key: username
+            name: myconfigmap
+    image: nginx
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+  
+    

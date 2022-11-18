@@ -1,0 +1,63 @@
+apiVersion: v1 
+kind: Namespace 
+metadata:
+  name: tempsid
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mydeployment
+  namespace: tempsid
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      initContainers:
+      - name: myinitapp
+        image: busybox
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        command:
+        - "sh"
+        - "-c"
+        - "echo \\<html\\>Hello my totally random name is : \\<h1\\>$RANDOM\\</h1\\>\\</html\\> > /home/index.html"
+        volumeMounts:
+        - mountPath: /home
+          name: zholmount
+      volumes:
+        -  name: zholmount
+           emptyDir: {}
+      containers:
+      - name: myapp
+        image: nginx
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - mountPath: /usr/share/nginx/html
+          name: zholmount
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: myservice
+  namespace: tempsid
+spec:
+  selector:
+    app: myapp
+  ports:
+  - port: 8080
+    targetPort: 80
+  type: LoadBalancer
+

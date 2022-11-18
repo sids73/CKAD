@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: data-exchange
+  labels:
+    name: data-exchange
+spec:
+  containers:
+  - name: main-app
+    image: busybox
+    volumeMounts:
+      - mountPath: /var/app/data
+        name: data-dir
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    command:
+      - "sh"
+      - "-c"
+      - "i=1; while true; do echo contents > /var/app/data/$i-data.txt; sleep 30; i=$((i+1)); done"
+  - name: sidecar
+    image: busybox
+    volumeMounts:
+      - mountPath: /var/app/data
+        name: data-dir
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    command:
+      - "sh"
+      - "-c"
+      - "while true; do echo At $(date) number of files is $(ls /var/app/data/*-data.txt | wc -l); sleep 60; done"
+  volumes:
+    - name: data-dir
+      emptyDir: {}
+        
+  
+
